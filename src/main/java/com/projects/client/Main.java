@@ -19,16 +19,17 @@ public class Main {
             case "1" -> getFileRequest(client);
             case "2" -> saveFileRequest(client);
             case "3" -> deleteFileRequest(client);
-            case "exit" -> client.exit();
+            case "exit" -> exitRequest(client);
             default -> throw new IllegalStateException("Unexpected value: " + action);
         };
         if (response != null) {
             System.out.println(response);
             client.processResponse(response);
         }
+        client.exit();
     }
 
-    public static Response getFileRequest(Client client) {
+    private static Response getFileRequest(Client client) {
         System.out.println("Do you want to get the file by name or by id (1 - name, 2 - id): ");
         String action = scanner.nextLine();
         if (action.equals("1")) {
@@ -49,7 +50,7 @@ public class Main {
         }
     }
 
-    public static Response saveFileRequest(Client client) {
+    private static Response saveFileRequest(Client client) {
         System.out.println("Enter name of the file: ");
         String fileName = scanner.nextLine();
         File file = path.resolve(fileName).toFile();
@@ -66,7 +67,7 @@ public class Main {
         return null;
     }
 
-    public static Response deleteFileRequest(Client client) {
+    private static Response deleteFileRequest(Client client) {
         System.out.println("Do you want to get the file by name or by id (1 - name, 2 - id): ");
         String action = scanner.nextLine();
         if (action.equals("1")) {
@@ -85,5 +86,9 @@ public class Main {
             System.out.println("Invalid action");
             return null;
         }
+    }
+
+    private static Response exitRequest(Client client) {
+        return client.sendRequest(new Request(Request.RequestType.EXIT));
     }
 }

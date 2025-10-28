@@ -52,6 +52,7 @@ public class Client {
         return null;
     }
 
+
     public void processResponse(Response response) {
         switch (response.getRequestType()) {
             case GET -> {
@@ -72,6 +73,13 @@ public class Client {
                 switch (response.getStatusCode()) {
                     case HTTP_OK -> System.out.printf("The response says that this file was deleted successfully!%n");
                     case HTTP_NOT_FOUND -> System.out.printf("The response says that this file is not found!%n");
+                    default -> System.out.println("Invalid response");
+                }
+            }
+            case EXIT -> {
+                switch (response.getStatusCode()) {
+                    case HTTP_OK -> System.out.printf("The response says that server closed successfully!%n");
+                    case HTTP_NOT_FOUND -> System.out.printf("The response says that server issued an error%n");
                     default -> System.out.println("Invalid response");
                 }
             }
@@ -97,7 +105,7 @@ public class Client {
         System.out.println("File saved on the hard drive!");
     }
 
-    public Response exit() {
+    public void exit() {
         try {
             dataInputStream.close();
             dataOutputStream.close();
@@ -106,6 +114,5 @@ public class Client {
             System.out.println("Error: " + e.getMessage());
         }
         System.exit(0);
-        return null;
     }
 }
