@@ -2,15 +2,16 @@ package com.projects.common;
 
 public class Request {
     public enum RequestType {GET, PUT, DELETE, EXIT}
+    public enum ProcessFileBy {BY_ID, BY_NAME}
 
-    private RequestType type;
+    private final RequestType type;
+    private ProcessFileBy by;
     private String fileName;
-    private String data;
 
-    public Request(RequestType type, String fileName, String data) {
+    public Request(RequestType type, ProcessFileBy by, String fileName) {
         this.type = type;
+        this.by = by;
         this.fileName = fileName;
-        this.data = data;
     }
 
     public Request(RequestType type, String fileName) {
@@ -26,21 +27,26 @@ public class Request {
         return type;
     }
 
-    public String getData() {
-        return data;
-    }
-
     public String getFileName() {
         return fileName;
     }
 
+    public ProcessFileBy getBy() {
+        return by;
+    }
+
+    //GET BY_NAME name
+    //DELETE BY_ID id
+    //PUT NAME
     public static Request parseRequest(String request) {
         String[] parts = request.split(" ", 3);
         try {
             RequestType requestType = RequestType.valueOf(parts[0].toUpperCase());
-            String name = parts.length > 1 ? parts[1] : "";
-            String data = parts.length > 2 ? parts[2] : "";
-            return new Request(requestType, name, data);
+            if (parts.length == 2) {
+                return new Request(requestType, parts[1]);
+            } else {
+                return new Request(requestType, ProcessFileBy.valueOf(parts[1]), parts[2]);
+            }
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid request: " + request);
         }
@@ -48,6 +54,7 @@ public class Request {
 
     @Override
     public String toString() {
-        return String.format("%s %s %s", type.name(), fileName, data);
+        if (this.by == null) return String.format("%s %s", type, fileName);
+        else return String.format("%s %s %s", type.name(), by.name(), fileName);
     }
 }
